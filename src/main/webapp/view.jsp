@@ -9,6 +9,7 @@
 <!-- 반응형 웹에 사용하는 메타태그 -->
 <meta name="viewport" content="width=device-width", initial-scale="1">
 <link rel="stylesheet" href="css/bootstrap.css">
+<link rel="stylesheet" href="css/custom.css">
 <meta charset="EUC-KR">
 <title>JSP게시판 웹사이트</title>
 </head>
@@ -22,6 +23,16 @@
 		if(request.getParameter("bbsID")!=null) {
 			bbsID = Integer.parseInt(request.getParameter("bbsID"));
 		}
+		if(bbsID == 0) {
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('유효하지 않은 글입니다.')");
+			script.println("location.href='bbs.jsp'");
+			script.println("</script>");
+		}
+		
+		// 해당 글의 구체적인 내용을 가져올 수 있도록 인스턴스 생성
+		Bbs bbs = new BbsDAO().getBbs(bbsID);
 	%>
 	<nav class="navbar navbar-default">
 		<div class="navbar-header">
@@ -78,24 +89,42 @@
 	<!-- 게시판을 보여주기위한 테이블 추가 -->
 	<div class="container">
 		<div class="row">
-			<form method="post" action="writeAction.jsp">
-				<table class="table table-striped" style="text-align:center; border:1px solid #dddddd;">
-					<thead>
-						<tr>
-							<th colspan="2" style="background-color:#eeeeee; text-align:center;">게시판 글쓰기 양식</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><input type="text" class="form-control" placeholder="글 제목" name="bbsTitle" maxlength="50"></td>
-						</tr>
-						<tr>
-							<td><textarea class="form-control" placeholder="글 내용" name="bbsContent" maxlength="2048" style="height:350px;"></textarea></td>
-						</tr>
-					</tbody>
-				</table>
-			<input type="submit" class="btn btn-primary pull-right" value="글쓰기">
-			</form>
+			<table class="table table-striped" style="text-align:center; border:1px solid #dddddd;">
+				<thead>
+					<tr>
+						<th colspan="3" style="background-color:#eeeeee; text-align:center;">게시판 글 보기</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td style="width:20%;">글 제목</td>
+						<td colspan="2"><%=bbs.getBbsTitle().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&gt").replaceAll("\n","<br>") %></td>
+					</tr>
+					<tr>
+						<td>작성자</td>
+						<td colspan="2"><%=bbs.getUserID() %></td>
+					</tr>
+					<tr>
+						<td>작성일</td>
+						<td colspan="2"><%=bbs.getBbsDate().substring(0,11) + bbs.getBbsDate().substring(11,13) + "시" + bbs.getBbsDate().substring(14,16) + "분"%></td>
+					</tr>
+					<tr>
+						<td>내용</td>
+						<td colspan="2" style="text-align:left; height:200px;">
+							<%= bbs.getBbsContent().replaceAll(" ","&nbsp;").replaceAll("<","&lt;").replaceAll(">","&gt").replaceAll("\n","<br>") %>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<a href="bbs.jsp" class="btn btn-primary">목록</a>
+			<%
+				if(userID !=null && userID.equals(bbs.getUserID())) {
+					%>
+						<a href="update.jsp?bbsID=<%=bbsID %>" class="btn btn-primary">수정</a>
+						<a onclick="return confirm('정말로 삭제하시겠습니까?')" href="deleteAction.jsp?bbsID=<%=bbsID%>" class="btn btn-primary">삭제</a>
+					<%
+				}
+			%>
 		</div>
 	</div>
 	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>

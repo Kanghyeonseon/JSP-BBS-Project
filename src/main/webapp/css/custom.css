@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR&display=swap');
+* {
+	font-family: 'Noto Sans KR', sans-serif;
+}
+h1 {
+	font-family: 'Do Hyeon', sans-serif;
+}
+
+.item{
+	width:500px;
+	height:500px;
+}

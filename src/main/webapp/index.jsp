@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="EUC-KR">
+<link rel="stylesheet" href="css/custom.css">
 <title>JSP게시판 웹사이트</title>
 </head>
 <body>
